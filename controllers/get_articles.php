@@ -1,5 +1,7 @@
 <?php 
+require("../models/Article.php");
 require("../connection/connection.php");
+
 $response = [];
 $response["status"] = 200;
 $response["articles"] = [];
@@ -15,6 +17,18 @@ if(isset($_GET["id"])){
 $query->execute();
 
 $array = $query->get_result();
+
+if(isset($_GET["id"])){
+    $data = $array->fetch_assoc();
+
+    $article = new Article();
+    $article->fetchFromDatabase($mysqli, $id);
+
+    $response["article"] = $article->toArray();
+    echo json_encode($response);
+    return;
+}
+
 $articles = []; //temp array to store the articles from the db
 while($article = $array->fetch_assoc()){
     $articles[] = $article;
