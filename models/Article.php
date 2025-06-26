@@ -1,16 +1,20 @@
 <?php
-class Article{
+require_once("Model.php");
+
+class Article extends Model{
 
     private int $id; 
     private string $name; 
     private string $author; 
     private string $description; 
+    
+    protected static string $table = "articles";
 
-    public function __construct(int $id, string $name, string $author, string $description){
-        $this->id = $id;
-        $this->name = $name;
-        $this->author = $author;
-        $this->description = $description;
+    public function __construct(array $data){
+        $this->id = $data["id"];
+        $this->name = $data["name"];
+        $this->author = $data["author"];
+        $this->description = $data["description"];
     }
 
     public function getId(): int {
@@ -44,14 +48,5 @@ class Article{
     public function toArray(){
         return [$this->id, $this->name, $this->author, $this->description];
     }
-
-    public function fetchFromDatabase($mysqli, int $id){
-        $query = $mysqli->prepare("SELECT * from articles where id = ?");
-        $query->bind_param("i", $id); 
-        $query->execute();
-        $array = $query->get_result();
-        $data = $array->fetch_assoc();
-        return new Article($data["id"], $data["name"], $data["author"], $data["description"]);
-    }
-
+    
 }
