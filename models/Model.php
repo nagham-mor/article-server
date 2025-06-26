@@ -34,6 +34,13 @@ abstract class Model{
         return $objects; //we are returning an array of objects!!!!!!!!
     }
 
+    //you have to continue with the same mindset
+    //Find a solution for sending the $mysqli everytime... 
+    //Implement the following: 
+    //1- update() -> non-static function 
+    //2- create() -> static function
+    //3- delete() -> non-static function 
+
 }
 
 
