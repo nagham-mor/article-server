@@ -39,7 +39,7 @@ abstract class Model{
     //Implement the following: 
     //1- update() -> non-static function 
     //2- create() -> static function
-    //3- delete() -> non-static function 
+    //3- delete() -> static function 
 }
 
 
