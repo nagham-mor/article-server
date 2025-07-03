@@ -1,5 +1,4 @@
 <?php 
-require(__DIR__ . '/connection/connection.php');
 
 // This block is used to extract the route name from the URL
 //----------------------------------------------------------
