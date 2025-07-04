@@ -28,18 +28,64 @@ abstract class Model{
 
         $objects = [];
         while($row = $data->fetch_assoc()){
-            $objects[] = new static($row); //creating an object of type "static" / "parent" and adding the object to the array
+            $objects[] = new static($row); 
         }
 
-        return $objects; //we are returning an array of objects!!!!!!!!
+        return $objects; 
     }
 
-    //you have to continue with the same mindset
-    //Find a solution for sending the $mysqli everytime... 
-    //Implement the following: 
-    //1- update() -> non-static function 
-    //2- create() -> static function
-    //3- delete() -> static function 
+    public static function delete(mysqli $mysqli, int $id){
+        $sql = sprintf("Delete from %s WHERE %s = ?", 
+                        static::$table, 
+                        static::$primary_key);
+        
+        $query = $mysqli->prepare($sql);
+        $query->bind_param("i", $id);
+        $result = $query->execute();
+        return $result;
+    }           
+
+    public static function deleteAll(mysqli $mysqli){
+        $sql = sprintf("Delete from %s", static::$table);
+
+        $query = $mysqli->prepare($sql);
+        return $query->execute();
+     
+    }
+
+    public static function create(mysqli $mysqli, array $data){
+        
+    $columns = implode(',', array_keys($data));
+    $values  = "'" . implode("','", array_values($data)) . "'";
+
+    $sql = sprintf(
+        "Insert into %s (%s) VALUES (%s)",
+        static::$table,
+        $columns,
+        $values
+    );
+    return $mysqli->query($sql);
+    }
+
+   public static function update(mysqli $mysqli, array $data){
+
+    $id = $data['id'];
+    unset($data['id']);
+
+    $columns = implode(',', array_keys($data));
+    $values  = "'" . implode("','", array_values($data)) . "'";
+
+    $sql = sprintf(
+        "UPDATE %s SET (%s) = (%s) WHERE %s = %d",
+        static::$table,
+        $columns,
+        $values,
+        static::$primary_key,
+        $id
+    );
+
+    return $mysqli->query($sql);
+}
 }
 
 

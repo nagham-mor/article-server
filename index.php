@@ -1,8 +1,13 @@
-<?php 
+<?php
+require_once __DIR__ . '/connection/connection.php';
+require_once __DIR__ . '/models/Article.php';
+require_once __DIR__ . '/models/Category.php';
+require_once __DIR__ . '/services/ResponseService.php';
+require_once __DIR__ . '/controllers/ArticleController.php';
+require_once __DIR__ . '/controllers/CategoryController.php';
+require_once __DIR__ . '/routes/apis.php';
 
-// This block is used to extract the route name from the URL
-//----------------------------------------------------------
-// Define your base directory 
+
 $base_dir = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
 $request = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
@@ -16,25 +21,6 @@ if ($request == '') {
     $request = '/';
 }
 
-//Examples: 
-//http://localhost/getArticles -------> $request = "getArticles"
-//http://localhost/ -------> $request = "/" (why? because of the if)
-
-// This block is used to extract the route name from the URL
-//----------------------------------------------------------
-
-
-//Routing starts here (Mapping between the request and the controller & method names)
-//It's an key-value array where the value is an key-value array
-//----------------------------------------------------------
-$apis = [
-    '/articles'         => ['controller' => 'ArticleController', 'method' => 'getAllArticles'],
-    '/delete_articles'         => ['controller' => 'ArticleController', 'method' => 'deleteAllArticles'],
-
-    '/login'         => ['controller' => 'AuthController', 'method' => 'login'],
-    '/register'         => ['controller' => 'AuthController', 'method' => 'register'],
-
-];
 
 //----------------------------------------------------------
 

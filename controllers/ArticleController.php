@@ -1,36 +1,91 @@
 <?php 
+// require(__DIR__ . "/../BaseController.php");
+require_once(__DIR__ . "/../models/Article.php");
+require_once(__DIR__ . "/../connection/connection.php");
+require_once(__DIR__ . "/../services/ArticleService.php");
+require_once(__DIR__ . "/../services/ResponseService.php");
 
-require(__DIR__ . "/../models/Article.php");
-require(__DIR__ . "/../connection/connection.php");
-require(__DIR__ . "/../services/ArticleService.php");
-require(__DIR__ . "/../services/ResponseService.php");
-
-class ArticleController{
+class ArticleController {
     
     public function getAllArticles(){
-        global $mysqli;
 
-        if(!isset($_GET["id"])){
+        try{
+            global $mysqli;
             $articles = Article::all($mysqli);
-            $articles_array = ArticleService::articlesToArray($articles); 
+            $articles_array = ArticleService::articlesToArray($articles);
             echo ResponseService::success_response($articles_array);
             return;
-        }
+        }catch(Exception $e){
+            echo ResponseService::error_response($e->getessage());
 
-        $id = $_GET["id"];
+
+        }
+    }
+
+    public function getSpecificArticle(){
+        global $mysqli;
+        $id = (int)$_GET['id'];
         $article = Article::find($mysqli, $id)->toArray();
         echo ResponseService::success_response($article);
         return;
     }
 
-    public function deleteAllArticles(){
-        die("Deleting...");
+    public function addNewArticle(){
+        global $mysqli;
+         $data = [
+        'name'        => $_GET['name']        ?? null,
+        'author'      => $_GET['author']      ?? null,
+        'description' => $_GET['description'] ?? null,
+        'category_id' => $_GET['category_id'] ?? null
+    ];
+        $newArticle = Article::create($mysqli, $data);
+
+        echo ResponseService::success_response(['insert'=>$newArticle]);
+        return;
+
     }
+
+    public function deleteAllArticles(){
+        global $mysqli;
+        $deleteAll = Article::deleteAll($mysqli);
+        echo ResponseService::success_response(['delete_all'=>$deleteAll]);
+        return;
+
+    }
+
+    public function deleteSpecificArticle(){
+        global $mysqli;
+        $id = $_GET['id'];
+        $deleteSpecific = Article::delete($mysqli, $id);
+        echo ResponseService::success_response(['delete_specific'=>$deleteSpecific]);
+        return;
+    }
+
+    public function updateArticle(){
+        global $mysqli;
+         $data = [
+        'id'          => $_GET['id']        ?? null,   
+        'name'        => $_GET['name']        ?? null,
+        'author'      => $_GET['author']      ?? null,
+        'description' => $_GET['description'] ?? null,
+        'category_id' => $_GET['category_id'] ?? null
+    ];
+        $updatedArticle = Article::create($mysqli, $data);
+
+        echo ResponseService::success_response(['insert'=>$updatedArticle]);
+        return;
+
+
+    }
+
+    public function getArticleByCategory(){
+        global $mysqli;
+        $categoryId =  $_GET['category_id'] ?? null;
+        $articles = Article::findByCategory($mysqli, $categoryId);
+        $articles_array = ArticleService::articlesToArray($articles);
+        echo ResponseService::success_response($articles_array);
+        return;
+    }
+
 }
-
-//To-Do:
-
-//1- Try/Catch in controllers ONLY!!! 
-//2- Find a way to remove the hard coded response code (from ResponseService.php)
-//3- Include the routes file (api.php) in the (index.php) -- In other words, seperate the routing from the index (which is the engine)
-//4- Create a BaseController and clean some imports 
+       
